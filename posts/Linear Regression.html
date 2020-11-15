@@ -1,0 +1,730 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Linear Regression:</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+.select-value-color-default { background-color: rgba(206,205,202,0.5); }
+.select-value-color-gray { background-color: rgba(155,154,151, 0.4); }
+.select-value-color-brown { background-color: rgba(140,46,0,0.2); }
+.select-value-color-orange { background-color: rgba(245,93,0,0.2); }
+.select-value-color-yellow { background-color: rgba(233,168,0,0.2); }
+.select-value-color-green { background-color: rgba(0,135,107,0.2); }
+.select-value-color-blue { background-color: rgba(0,120,223,0.2); }
+.select-value-color-purple { background-color: rgba(103,36,222,0.2); }
+.select-value-color-pink { background-color: rgba(221,0,129,0.2); }
+.select-value-color-red { background-color: rgba(255,0,26,0.2); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="83a974e1-ddae-4fb4-a701-eb3849f16145" class="page sans"><header><img class="page-cover-image" src="https://www.notion.so/images/page-cover/gradients_5.png" style="object-position:center 47.22%"/><div class="page-header-icon page-header-icon-with-cover"><span class="icon">💤</span></div><h1 class="page-title">Linear Regression:</h1></header><div class="page-body"><h3 id="3c374d60-b917-4c2b-a9cc-0fb9a2ddf68d" class="">Simple Linear Regression:</h3><ul id="76c59a80-22ff-4086-bb31-912a0bd3c70c" class="bulleted-list"><li>Allows to understand the <strong>Relationship </strong>between two <strong>Continuous Variables.</strong></li></ul><ul id="15bf3cc4-5ebd-42ab-9c77-58f17a2c5912" class="bulleted-list"><li><strong>Examples:</strong><ul id="fa69e035-daf7-4378-b2ee-102838591cfa" class="bulleted-list"><li>x : Independent Variable<ul id="31761f3b-0589-4a5d-b7da-6605ffda70ac" class="bulleted-list"><li>Weight</li></ul></li></ul><ul id="e4b286b2-4128-42d7-b1b0-8ad0fe753c48" class="bulleted-list"><li> y : Dependent Variable<ul id="b4121cd3-397a-482b-9b0d-edd0d3239ece" class="bulleted-list"><li>Height</li></ul></li></ul></li></ul><ul id="20567875-3f02-49fe-8508-44161e296302" class="bulleted-list"><li><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>α</mi><mi>x</mi><mo>+</mo><mi>β</mi></mrow><annotation encoding="application/x-tex">y = \alpha x + \beta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05278em;">β</span></span></span></span></span><span>﻿</span></span></li></ul><p id="bf999f73-604c-43d0-954e-1a4790c188f5" class="">
+</p><h3 id="5040be5d-d188-4b78-a308-278d4048b467" class="">Aim of Linear Regression.</h3><ul id="e27f0252-6540-4268-adb7-06ebba47f77c" class="bulleted-list"><li>Minimize the distance between the points and the line (<style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>α</mi><mi>x</mi><mo>+</mo><mi>β</mi></mrow><annotation encoding="application/x-tex">y = \alpha x + \beta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05278em;">β</span></span></span></span></span><span>﻿</span></span>).</li></ul><ul id="6e5abbe5-be95-4f86-ad10-d8834cc2c603" class="bulleted-list"><li>Adjusting:<ul id="7ccb232d-51ec-409d-aba4-09bd7be18cf6" class="bulleted-list"><li>Coefficient: <style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span></span></span></span></span><span>﻿</span></span></li></ul><ul id="9aadd529-71d0-4bfd-82fa-adcab7f8f952" class="bulleted-list"><li>Bias/intercept: <style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05278em;">β</span></span></span></span></span><span>﻿</span></span></li></ul></li></ul><p id="5e1af755-a1d8-4222-8466-3a0316fc2fd8" class="">
+</p><h2 id="747d264e-8fe9-4e75-ab1e-d7bfa2c0f01c" class="">Building a Linear Regression Model with PyTorch:</h2><h3 id="c154a2dc-97d3-4d4e-93df-aef55ff73bb4" class="">Example</h3><ul id="636df04b-876e-4ae7-a8e9-5ebe9a5e27db" class="bulleted-list"><li>Coefficient: \alpha = 2</li></ul><ul id="f686950b-42ef-4bf2-a5e3-8106ad2938c5" class="bulleted-list"><li>Bias/intercept: \beta = 1</li></ul><ul id="70bba273-483e-4a1e-9c32-cfba949052e6" class="bulleted-list"><li>Equation: y = 2x + 1</li></ul><p id="10da7f46-3f51-46ce-b0f3-470e91d1265b" class=""> </p><h3 id="a18d68d0-fd44-4c26-9248-090214f0149c" class="">Building a Toy Dataset:</h3><pre id="218931be-b965-4357-ae68-eb4b952aa971" class="code"><code># Creating a list of values from 0 to 11
+x = [i for i in range(11)]
+
+x</code></pre><pre id="8988915f-b81b-4a7e-8647-6df30b838e35" class="code"><code>🤙
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</code></pre><p id="c55f1298-5b54-4f83-a993-b2270ad1cb9f" class="">
+</p><p id="a334bb7f-b9ff-4c4e-8415-1c16f77bfeef" class=""><strong>Convert list of numbers into NumPy array:</strong></p><pre id="0d0a6d3d-cef7-42a8-88cf-f52979435c5e" class="code"><code>x_train = np.array(x, dtype = np.float32)
+
+x_train.shape</code></pre><pre id="b3e9161e-3c56-4187-9167-36ca4f63512b" class="code"><code>🤙
+(11,)</code></pre><p id="2d91ffa8-22e7-40c2-9236-de7e73a29448" class="">
+</p><p id="ff94073d-7e12-4627-b58f-c8e73d134928" class=""><strong>Convert into 2D array:</strong></p><p id="cb34771d-0eec-4131-9505-2d2a01a9949b" class="">If you don&#x27;t do this you&#x27;ll get an error stating you need 2D. Simply just reshape accordingly if you ever face such errors.</p><pre id="143b842d-8b81-49fe-937f-d9c7ce02bd0f" class="code"><code>x_train = x_train.reshape(-1,1)
+
+x_train.shape</code></pre><pre id="7e3ea485-5107-4348-b4bd-7fb656d066be" class="code"><code>🤙
+(11,1)</code></pre><p id="86d19cb6-060b-44eb-88ae-4a2dc6767d6a" class="">
+</p><p id="40b0386b-2cd6-4d57-8268-8bb6398f9b00" class=""><strong>Create a list of y values:</strong></p><p id="492d7433-1d95-4d21-afef-817629d0f977" class="">We want y values for every x value we have above.</p><p id="e97bb425-b152-4a3a-8ede-48add36a3a35" class=""><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">y = 2x + 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></span><span>﻿</span></span></p><pre id="3311fd23-8c8e-4030-b05b-9653d9ccd6a3" class="code"><code>y = [(2 * i + 1) for i in x]
+
+y</code></pre><pre id="9517a7d1-f2a8-4c70-9bea-ff9bd06ebdb8" class="code"><code>🤙
+[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21]</code></pre><p id="3be06333-8f7b-4579-84a9-90de9820e130" class="">
+</p><p id="3a67d93b-8cb7-43ce-a9a3-cf9b3f28f563" class=""><strong>Convert it into NumPy Array and reshape to 2D:</strong></p><pre id="f02dd4a9-def8-4249-a86e-c79e7b5e606d" class="code"><code>y_train = np.array(y,dtype= np.float32)
+
+y_train = y_train.reshape(-1,1)
+
+y_train.shape</code></pre><pre id="8b289090-9770-451a-8e33-74ba61d68182" class="code"><code>🤙
+(11, 1)</code></pre><p id="e777e0b1-0c83-4a15-a99a-7fe5a45d770e" class="">
+</p><h3 id="2c4ed972-5508-4afd-be82-c026191ad686" class="">Building a Model PyTorch:</h3><pre id="79f04d69-c287-4168-9de2-6ed9389553ca" class="code"><code># Importing Libraries:
+import torch
+import torch.nn as nn</code></pre><p id="6469ab8a-a4ea-4715-881f-24a57fdae6ef" class="">
+</p><p id="a61fc16b-a7d8-465f-ab55-8b929b7da8f0" class=""><strong>Create Model:</strong></p><ol id="940c5851-7838-4816-8caf-e91a9dcd9b4f" class="numbered-list" start="1"><li>Linear model<ul id="d0a1c083-dbf5-40b2-8586-1f55c16a4c83" class="bulleted-list"><li>True Equation: <style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">y = 2x + 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></span><span>﻿</span></span></li></ul></li></ol><ol id="82387deb-543b-465e-9bb5-076727a8b373" class="numbered-list" start="2"><li>Forward<ul id="2667945a-b840-4dae-9a6b-86d52ba56d1a" class="bulleted-list"><li>Example<ul id="e188c484-9226-44da-98d3-8c148dac0e6d" class="bulleted-list"><li>Input <style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">x = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></span><span>﻿</span></span></li></ul><ul id="a453e70c-7bce-4b4d-9080-6dac63bac0a3" class="bulleted-list"><li>Output <style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>y</mi><mo>^</mo></mover><mo>=</mo><mo stretchy="false">?</mo></mrow><annotation encoding="application/x-tex">\hat y = ?</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.19444em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mclose">?</span></span></span></span></span><span>﻿</span></span></li></ul></li></ul></li></ol><pre id="1096d4bb-e5e0-4acf-a1f4-571938a836d4" class="code"><code>class LinearRegression(nn.Module):
+  def __init__(self,input_dim, output_dim):
+    super(LinearRegression, self).__init__()
+    self.linear = nn.Linear(input_dim, output_dim)
+  
+  def forward(self, x):
+    out = self.linear(x)
+    return out</code></pre><p id="b4406670-39d2-42b3-9a5a-507726ebd728" class="">
+</p><p id="af1431e2-6bda-464e-986d-8e5f537bb568" class=""><strong>Instantiate Model Class:</strong></p><ul id="ae7b397f-9c2b-46a2-b6e7-7042de7871dd" class="bulleted-list"><li>input: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</li></ul><ul id="26d800c6-48cc-4c0e-a445-967c30907341" class="bulleted-list"><li>desired output: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21]</li></ul><pre id="6a2af616-5a40-4bdc-84cd-f7775d4778f7" class="code"><code>input_dim = 1
+output_dim = 1
+
+model = LinearRegressionModel(input_dim, output_dim)</code></pre><p id="73dafb4c-bb48-4815-9daf-b99027640a5a" class="">
+</p><p id="d8a05d41-2dec-46a2-a676-6b3a1218d022" class=""><strong>Instantiate Loss Class:</strong></p><ul id="b75e9954-5e1a-4439-9270-7b17223faf8d" class="bulleted-list"><li>MSE Loss: Mean Squared Error</li></ul><ul id="8e3c8a9f-4877-44cc-8ec0-2ca1165c1d5a" class="bulleted-list"><li>MSE = <style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mi>n</mi></mfrac><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup><mo stretchy="false">(</mo><msub><mover accent="true"><mi>y</mi><mo>^</mo></mover><mi>i</mi></msub><mo>−</mo><msub><mi>y</mi><mi>i</mi></msub><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\frac{1}{n} \sum_{i=1}^n(\hat y_i - y_i)^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.190108em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.845108em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.804292em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.29971000000000003em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.19444em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span><span>﻿</span></span><ul id="6c907376-c7c4-4909-ae77-3722366c8c25" class="bulleted-list"><li><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>y</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.19444em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span></span></span></span></span><span>﻿</span></span>: prediction</li></ul><ul id="22dba47f-bfd7-467f-a22a-10f9d399831b" class="bulleted-list"><li><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span></span></span><span>﻿</span></span>: true value</li></ul></li></ul><pre id="910c5b64-eff3-4b42-bee9-2a2e7369e242" class="code"><code>criterion = nn.MSELoss()</code></pre><p id="cd21928f-91d5-4383-980c-a31c1a69bae9" class="">
+</p><p id="5e30bfbb-18ae-4ac3-9d37-55cdb3a93975" class=""><strong>Instantiate Optimizer Class:</strong></p><ul id="87bbd19e-5bac-4627-a69f-141c0c7b0ef1" class="bulleted-list"><li>Simplified equation<ul id="acfe5bdd-75fc-4774-9009-0845d01f4426" class="bulleted-list"><li><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>=</mo><mi>θ</mi><mo>−</mo><mi>η</mi><mo>⋅</mo><msub><mi mathvariant="normal">∇</mi><mi>θ</mi></msub></mrow><annotation encoding="application/x-tex">\theta = \theta - \eta \cdot \nabla_\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.63889em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">η</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">∇</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span><span>﻿</span></span><ul id="59dbf99d-feb8-496e-899f-fb233da86253" class="bulleted-list"><li><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>:</mo></mrow><annotation encoding="application/x-tex">\theta:</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span></span></span></span><span>﻿</span></span> parameters (our variables)</li></ul><ul id="f0244393-21ee-469a-b140-0a4bdd3e9cf3" class="bulleted-list"><li><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>η</mi></mrow><annotation encoding="application/x-tex">\eta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">η</span></span></span></span></span><span>﻿</span></span>: learning rate (how fast we want to learn)</li></ul><ul id="b98868a7-b4e8-40cb-90bb-5083ec605192" class="bulleted-list"><li><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">∇</mi><mi>θ</mi></msub></mrow><annotation encoding="application/x-tex">\nabla_\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">∇</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span><span>﻿</span></span>: parameters&#x27; gradients</li></ul></li></ul></li></ul><ul id="9273d757-eec4-4cd2-ae1f-d833618a2d72" class="bulleted-list"><li>Even simplier equation<ul id="1487265f-4bc4-4cde-a09c-dd596223e0ee" class="bulleted-list"><li><code>parameters = parameters - learning_rate * parameters_gradients</code><ul id="54fdccf0-f223-42d6-a781-04751f8be4a0" class="bulleted-list"><li>parameters:<style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext> </mtext><mi>α</mi></mrow><annotation encoding="application/x-tex"> \alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord"> </span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span></span></span></span></span><span>﻿</span></span> and <style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05278em;">β</span></span></span></span></span><span>﻿</span></span> in<style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext> </mtext><mi>y</mi><mo>=</mo><mi>α</mi><mi>x</mi><mo>+</mo><mi>β</mi></mrow><annotation encoding="application/x-tex"> y = \alpha x + \beta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"> </span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05278em;">β</span></span></span></span></span><span>﻿</span></span></li></ul><ul id="6caeb9b8-9d57-4802-b1ed-c7c752239fef" class="bulleted-list"><li>desired parameters: <style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">\alpha = 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span></span></span></span></span><span>﻿</span></span> and<style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext> </mtext><mi>β</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex"> \beta = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"> </span><span class="mord mathdefault" style="margin-right:0.05278em;">β</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></span><span>﻿</span></span> in <style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">y = 2x + 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></span><span>﻿</span></span></li></ul></li></ul></li></ul><pre id="b72d14ff-77e4-482c-915a-0d1fda6eaf8a" class="code"><code>learning_rate = 0.01
+
+optim = torch.optim.SGD(model.parameters(), lr = learning_rate)</code></pre><p id="8e3df52f-db7c-450e-8151-8d46eddc7b3f" class="">
+</p><p id="864e5b00-1230-4ff1-b9b7-9c913539b9be" class="">
+</p><p id="aa71dd64-a202-4186-a20e-58bc1c0b9a57" class=""><strong>Use GPU for the model:</strong></p><pre id="1f6a2766-9f99-433c-a6cb-34dad24c3103" class="code"><code>device = torch.device(&#x27;cuda&#x27; if torch.cuda.is_available else &#x27;cpu&#x27;)
+model.to(device)</code></pre><h3 id="20a8c680-4641-4f4b-b562-1a360b7c96e9" class="">Train a Model:</h3><p id="d0a37ee6-0cbd-497c-a765-0eac8620863c" class="">1 epoch: going through the whole x_train data once</p><ul id="93438390-a233-4199-9cf6-8cc3406abf06" class="bulleted-list"><li>100 epochs:<ul id="84c35599-c342-4c35-a688-d545924e6400" class="bulleted-list"><li>100x mapping <code>x_train = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</code></li></ul></li></ul><ul id="c2b2f2ea-3e6e-41f1-bc3c-8bf442d7238a" class="bulleted-list"><li><strong>Process:</strong><ol id="21bebda8-268b-43e6-bb5e-e207ac05ea12" class="numbered-list" start="1"><li>Convert inputs/labels into tensors with gradients.</li></ol><ol id="67118bea-551b-4591-947a-a2b65b717178" class="numbered-list" start="2"><li>Clear Gradient Buffers.</li></ol><ol id="ff7daddc-797e-48f7-9783-338a83aa1366" class="numbered-list" start="3"><li>Get outputs from given inputs.</li></ol><ol id="5ba7c9ed-c8de-4958-8d83-5951a37e44db" class="numbered-list" start="4"><li>Get the Loss.</li></ol><ol id="fcc60927-4a23-4574-b56c-3fafa70d62af" class="numbered-list" start="5"><li>Get Gradients w.r.t the Parameters.</li></ol><ol id="e49d7482-e99a-402b-9c90-ba224900fd60" class="numbered-list" start="6"><li>Update the Parameters using Gradiens.<p id="aeea7dd7-9f4e-418e-841a-73dff8e207dd" class=""><code>parameters = parameters - learning_rate * parameters_gradients</code></p></li></ol><ol id="49370606-c636-4b5d-9e5c-b4466aac24e9" class="numbered-list" start="7"><li>Repeat</li></ol></li></ul><pre id="32dea1cd-06ed-4abd-9e9c-5b1e226f2ace" class="code"><code>epochs = 100
+
+for epoch in range(epochs):
+  epoch+=1
+
+  # Convert numpt variable into tensor with gradients
+  inputs = torch.from_numpy(x_train).to(device)
+  labels = torch.from_numpy(y_train).to(device)
+
+  # clear the gradients w.r.t Paramters.
+  optim.zero_grad()
+
+  # Forward to get output:
+  output = model(inputs)
+
+  # Calcualte the loss
+  loss = criterion(output, labels)
+
+  # Getting Gradients w.r.t Parameters.
+  loss.backward()
+
+  # Update the Parameters.
+  optim.step()
+
+  # Logging
+  print(&#x27;epoch {}, loss {}&#x27;.format(epoch, loss.item()))</code></pre><pre id="98d009d7-38bb-44f8-9e89-2fba09427efc" class="code"><code>🤙
+epoch 95, loss 0.00018149390234611928
+epoch 96, loss 0.0001794644631445408
+epoch 97, loss 0.00017746571393217891
+epoch 98, loss 0.00017548113828524947
+epoch 99, loss 0.00017352371651213616
+epoch 100, loss 0.00017157981346827</code></pre><p id="bbc6e0b5-c20c-43f8-a441-b146e5f98ee4" class=""><strong> </strong></p><p id="380f158f-9e47-4c39-bad5-bf9a98d6c26f" class=""><strong>Looking at the Predicted Values:</strong></p><pre id="38dcfc94-5278-429f-ab4d-220a26bb2a16" class="code"><code># Purely inference
+predicted = model(torch.from_numpy(x_train).to(device).requires_grad_())
+predicted</code></pre><p id="acbe5762-0a6c-4b5f-baf4-c91c4a72d6ab" class="">
+</p><p id="dd00ea95-6589-4fbe-8a3e-12055e661f94" class=""><strong>Plot of Predicted and Actual Values:</strong></p><pre id="8c1a08f7-9dcd-46e5-ba1e-1588134d35ac" class="code"><code># Clear Figure:
+plt.clf()
+
+# Plot True Data
+plt.plot(x_train, y_train, &#x27;go&#x27;, label = &#x27;True Data&#x27;, alpha = 0.5)
+
+# PLot predictions
+plt.plot(x_train, predicted, &#x27;--&#x27;, label = &#x27;Predictions&#x27;, alpha = 0.5)
+
+# Legend and plot
+plt.legend(loc = &#x27;best&#x27;)
+plt.show()</code></pre><figure id="de47144d-e22f-4ef4-85b8-6259c7bcc2af" class="image"><a href="https://www.deeplearningwizard.com/deep_learning/practical_pytorch/pytorch_linear_regression_files/pytorch_linear_regression_35_0.png"><img src="https://www.deeplearningwizard.com/deep_learning/practical_pytorch/pytorch_linear_regression_files/pytorch_linear_regression_35_0.png"/></a></figure><p id="e3044cf4-3997-4aac-b0c8-4cabb38b5195" class="">
+</p><p id="c5e6f0e2-5335-4524-a1f9-b437dfabe66c" class=""><strong>Save Model:</strong></p><pre id="ffb9bc75-953f-44d4-9877-be8397cc58ce" class="code"><code>save_model = False
+if save_model is True:
+  # Saves only parameters
+    # alpha &amp; beta
+    torch.save(model.state_dict(),&#x27;model.pkl&#x27;)</code></pre><p id="53c3c09f-8dde-44c3-b885-fbe31b69204c" class="">
+</p><p id="9d820823-bdab-49ce-853f-e2606840b0d9" class=""><strong>Load Model:</strong></p><pre id="56003dbd-f041-4752-9125-d42fae63071d" class="code"><code>load_model = False
+if load_model is True:
+  model.load_state_dict(torch.load(&#x27;model.pkl&#x27;))</code></pre><p id="8c2f2e08-f7f9-4848-940e-8d152afc361c" class="">
+</p><h2 id="b781b01f-763b-4467-821e-92ba22f35077" class="">Summary:</h2><ul id="8698c916-d220-460c-8c92-c17f137a3526" class="bulleted-list"><li>Simple linear regression basics<ul id="26cb9a66-5883-4c96-bb6c-ad7fbbc9362b" class="bulleted-list"><li>y = Ax + B</li></ul><ul id="05e2e75c-e23c-4451-b736-105898db8437" class="bulleted-list"><li>y = 2x + 1</li></ul></li></ul><ul id="a5146775-d703-4204-87eb-f02e3d0ddcee" class="bulleted-list"><li>Example of simple linear regression</li></ul><ul id="be28289a-1efd-41e4-8b65-3a865cdc4360" class="bulleted-list"><li>Aim of linear regression</li></ul><ul id="87f1bd09-aff6-459e-8d28-79ee41aafebb" class="bulleted-list"><li>Minimizing distance between the points and the line<ul id="f89f98fc-2ac7-4071-8743-0a8f00bf292d" class="bulleted-list"><li>Calculate &quot;distance&quot; through <code>MSE</code></li></ul><ul id="67b05571-a727-4d00-a511-185fb50ce4cc" class="bulleted-list"><li>Calculate <code>gradients</code></li></ul><ul id="0c6fd7e6-2576-4c2b-8a57-0ab6c62e2475" class="bulleted-list"><li>Update parameters with <code>parameters = parameters - learning_rate * gradients</code></li></ul><ul id="888def48-d0b8-4b08-ae2e-c01ae258b25a" class="bulleted-list"><li>Slowly update parameters A and B model the linear relationship between y and x of the form y = 2x + 1</li></ul></li></ul><p id="95e0abe2-a48e-4f17-97ec-7f2e71ec122c" class="">
+</p><ul id="67c1e02e-dd18-4962-8d01-97f150597192" class="bulleted-list"><li>Built a linear regression model in CPU and GPU<ul id="13a017b7-6f3f-4b31-b9c2-3fbd5c76937f" class="bulleted-list"><li>Step 1: Create Model Class</li></ul><ul id="bc4e5cb5-9e99-480f-bde8-b3ae4d2018e8" class="bulleted-list"><li>Step 2: Instantiate Model Class</li></ul><ul id="f14e39ec-9134-4f70-8ea7-55365013f70a" class="bulleted-list"><li>Step 3: Instantiate Loss Class</li></ul><ul id="0fc2a335-d85a-4f76-b530-095839733c0c" class="bulleted-list"><li>Step 4: Instantiate Optimizer Class</li></ul><ul id="2d3159ca-0d28-4b40-86d8-02dc92ce1aa6" class="bulleted-list"><li>Step 5: Train Model</li></ul></li></ul><ul id="6fa2a610-5886-4312-b937-92107b0a290d" class="bulleted-list"><li>Important things to be on GPU<ul id="8f493768-9ff6-4476-9f53-f327530bf379" class="bulleted-list"><li>model</li></ul><ul id="43f2d70a-da80-4500-8817-5eba0e77509f" class="bulleted-list"><li>tensors with gradients</li></ul></li></ul><ul id="460c0cd7-ba83-42c9-b654-b53da3f81559" class="bulleted-list"><li>How to bring to GPU?<ul id="2aa0e7a0-ffd7-4dbb-9a1d-bcf2b1c6b62a" class="bulleted-list"><li><code>model_name.to(device)</code></li></ul><ul id="34482d2a-c02f-48de-8883-bce46f1367ff" class="bulleted-list"><li><code>variable_name.to(device</code></li></ul><p id="79c7d404-5327-4f1b-b1c8-1062292e384d" class="">
+</p></li></ul><p id="88824146-c4bc-483d-b05f-0e6d2d7980ea" class=""><strong>Reference:</strong></p><p id="18eb181b-01c4-49f4-848a-246298203ff9" class=""><a href="https://colab.research.google.com/drive/1_l1PKeLnefEXermjgJUXg0KWzR0F_hCe?usp=sharing">[Notebook Link]</a></p><p id="978a23f9-62d0-426e-90eb-1fbbb7fe2ba4" class="">
+</p></div></article></body></html>
