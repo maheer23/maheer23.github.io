@@ -1,0 +1,653 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Face Recognition Using ‘face_recognition’ API</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+.select-value-color-default { background-color: rgba(206,205,202,0.5); }
+.select-value-color-gray { background-color: rgba(155,154,151, 0.4); }
+.select-value-color-brown { background-color: rgba(140,46,0,0.2); }
+.select-value-color-orange { background-color: rgba(245,93,0,0.2); }
+.select-value-color-yellow { background-color: rgba(233,168,0,0.2); }
+.select-value-color-green { background-color: rgba(0,135,107,0.2); }
+.select-value-color-blue { background-color: rgba(0,120,223,0.2); }
+.select-value-color-purple { background-color: rgba(103,36,222,0.2); }
+.select-value-color-pink { background-color: rgba(221,0,129,0.2); }
+.select-value-color-red { background-color: rgba(255,0,26,0.2); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="2a8e9830-7e3c-4033-82da-1069e11eb83a" class="page sans"><header><h1 class="page-title">Face Recognition Using ‘face_recognition’ API</h1></header><div class="page-body"><p id="0b96d117-3c83-43ec-8c18-f4cbf7a6e74a" class="">
+</p><p id="4ae8ad0c-f986-4a7f-b60c-df4096723f0d" class="">The world’s simplest facial recognition API for Python and the command line</p><p id="c56d155d-d8bb-4e39-92fd-dec80cb3b5e9" class="">In this article, we’ll explore the ‘face_recognition’ library and implement a face recognition system.</p><h3 id="f51540f5-a8e8-4efa-9af0-90389a03ed13" class=""><strong>Outline:</strong></h3><ol id="42805b01-5e90-4591-9fe1-db955e69ea48" class="numbered-list" start="1"><li>Step 1: Installation</li></ol><ol id="36669efe-4b8a-4fc5-8fa3-76bcc70c5e64" class="numbered-list" start="2"><li>Step 2: Finding Faces in Image</li></ol><ol id="8b4877f1-b7f5-480a-b6cb-d0aeb3627170" class="numbered-list" start="3"><li>Step 3: Identifying Facial Features</li></ol><ol id="93570fe2-6020-4425-ad1a-8ce4f6d8d775" class="numbered-list" start="4"><li>Step 4: Identifying Known Faces</li></ol><h3 id="47afc859-3266-4014-a6a8-b4f8272bd04d" class=""><strong>Step 1: Installation:</strong></h3><h3 id="9f585b41-b292-4221-a9bd-caf4992bece5" class="">Requirements</h3><ul id="91483c2a-e9b3-4684-aed5-d180c29ef433" class="bulleted-list"><li>Python 3.3+ or Python 2.7</li></ul><ul id="48f5976e-628c-476f-ab66-8711eb59eb96" class="bulleted-list"><li>macOS or Linux (Windows not officially supported, but it will work fine)</li></ul><p id="d34c91ff-0467-45e0-a820-e78fd06dadeb" class=""><strong>For windows, First make sure that you have </strong><code><strong>dlib</strong></code><strong> installed. If you don’t have </strong><code><strong>dlib</strong></code><strong> installed. Follow these steps</strong></p><ul id="acf6a4a5-f54f-43fc-973c-6749ff0ff5d5" class="bulleted-list"><li>Clone the code from GitHub:</li></ul><pre id="ceb033cb-b356-4a8f-a76d-71eaa32734aa" class="code"><code>git clone https://github.com/davisking/dlib.git</code></pre><ul id="4320364e-250a-4f40-9b40-8c01457d5149" class="bulleted-list"><li>Install with Python Extension:</li></ul><pre id="dd2634ef-2e89-4885-883e-71870a167b07" class="code"><code>cd ..
+python3 setup.py install</code></pre><p id="56de9f34-178a-433c-acb6-1767f5529a0b" class="">After this step, you should be able to run <code>import dlib</code> successfully.</p><blockquote id="144a5272-aadd-4dbb-8e13-57d230a7c258" class="">After successful installation of dlib library, install face_recognition using this pip command</blockquote><pre id="0ad4e75d-f163-4a48-bb7c-c64caa3a6874" class="code"><code>pip3 install face_recognition</code></pre><p id="6da911d2-47a8-4cd3-bb53-699f1d51a104" class="">Now, you are ready to implement a real-time face recognition system.</p><h3 id="bbfc82c5-f65d-4fae-a676-ed5b6023b66b" class=""><strong>Step 2: Finding Faces in Image:</strong></h3><p id="ff879913-a55b-49ca-a388-c6d7423245a7" class="">we’ll start by importing <code>face_recognition</code> library</p><pre id="aeaba35b-0702-40ac-ab5e-5e212c6c4773" class="code"><code>import face_recognition</code></pre><p id="38226161-a3c2-420a-a215-2088094cada7" class="">Using the built-in function <code>load_image_file()</code> to load the image. And then using <code>face_locations()</code> which gives an array listing the co-ordinates of each face!</p><pre id="b475b9be-0a35-4af7-994f-da898aa33f63" class="code"><code>image = face_recognition.load_image_file(&quot;picture.jpg&quot;)
+face_locations = face_recognition.face_locations(image)</code></pre><p id="9e76cffe-a0c9-4329-b8d8-8f4279949678" class="">The output will be something like this!</p><pre id="82253312-ed18-4ad6-a5db-f0321c5d7cc6" class="code"><code>I found 1 face(s) in this photograph.
+A face is located at pixel location Top: 241, Left: 419, Bottom: 562, Right: 740</code></pre><h3 id="8c9ae4e4-3686-4700-8f01-4b5b22540084" class=""><strong>Step 3: Identifying Facial Features:</strong></h3><p id="3af83e30-4b94-4bad-812f-4f81a1a22e80" class="">The <code>face_landmarks()</code> function locates all the landmarks in a face and returns a Dictionary containing the landmarks.</p><pre id="304b8f99-6cc3-4616-86d4-455156baf79e" class="code"><code># Find all facial features in all the faces in a image face_landmarks_list = face_recognition.face_landmarks(image)</code></pre><pre id="0a737feb-8e28-42af-be54-6802de8d1d1d" class="code"><code>print(face_landmarks_list)</code></pre><p id="210631c0-645c-42e0-9dcf-1ce4462aee2e" class="">And the output will be something like this!</p><pre id="0eaef854-f5d4-48dc-9b8a-e829a7f5f5ba" class="code"><code>[{&#x27;chin&#x27;: [(429, 328), (426, 368), (424, 408), (425, 447), (437, 484), (460, 515), (490, 538), (524, 556), (562, 564), (600, 566), (630, 554), (655, 533), (672, 507), (684, 476), (694, 445), (702, 413), (707, 382)], 
+&#x27;left_eyebrow&#x27;: [(488, 294), (509, 279), (535, 278), (561, 283), (584, 296)], 
+&#x27;right_eyebrow&#x27;: [(622, 307), (646, 305), (670, 309), (691, 321), (698, 344)], 
+&#x27;nose_bridge&#x27;: [(601, 328), (599, 352), (598, 375), (596, 400)], &#x27;nose_tip&#x27;: [(555, 414), (570, 421), (586, 428), (601, 428), (614, 426)], 
+&#x27;left_eye&#x27;: [(512, 320), (528, 316), (544, 319), (557, 331), (541, 330), (525, 327)], 
+&#x27;right_eye&#x27;: [(629, 348), (647, 342), (661, 346), (672, 357), (659, 358), (644, 354)], 
+&#x27;top_lip&#x27;: [(519, 459), (545, 455), (566, 456), (580, 462), (595, 462), (610, 470), (627, 480), (620, 477), (593, 470), (579, 468), (564, 463), (527, 459)], 
+&#x27;bottom_lip&#x27;: [(627, 480), (606, 482), (589, 479), (575, 477), (560, 473), (540, 468), (519, 459), (527, 459), (563, 461), (577, 466), (592, 468), (620, 477)]}]</code></pre><h3 id="75173abd-7c39-4f69-b1bd-819d0efd78a5" class=""><strong>Step 4: Identifying Known Faces:</strong></h3><p id="1c09091c-56c7-41a8-ac05-432fa3924b30" class="">First, we need pictures of people we want to recognize.</p><ul id="d1930d76-dd99-4086-b6d8-f0a5ed2f5961" class="bulleted-list"><li>Make Sure there is one person in each photo</li></ul><div id="f77537d6-a3d1-4729-818e-16271532108f" class="column-list"><div id="fc122bed-86b4-4b89-8e61-d47965427b48" style="width:50%" class="column"><figure id="c88cd9fc-238a-424f-8bb9-e573d2e96c65" class="image"><a href="https://cdn-images-1.medium.com/max/800/1*SbYmd5ZbK5GckezdN3yfIA.jpeg"><img style="width:336px" src="https://cdn-images-1.medium.com/max/800/1*SbYmd5ZbK5GckezdN3yfIA.jpeg"/></a></figure></div><div id="4c659c65-7f3c-43f5-91b0-9ad5b2a6ef57" style="width:50%" class="column"><figure id="ec217a48-cd57-499e-ba16-e20acf784e80" class="image"><a href="https://cdn-images-1.medium.com/max/600/1*aYvcnws0ZQei4PYZoZ1zWA.jpeg"><img style="width:288px" src="https://cdn-images-1.medium.com/max/600/1*aYvcnws0ZQei4PYZoZ1zWA.jpeg"/></a></figure><p id="4c3a152c-e927-4472-a367-c3cc7829724a" class="">
+</p></div></div><p id="287ddde8-300a-492f-8ffd-a9f45545feb8" class="">List of Known People</p><p id="18e7df1b-4eee-4ccf-80a2-73c2ce7f10a4" class="">Now, we’ll use <code>face_encodings()</code> function which returns a list of results of identified faces. Note that we will use <code>[0]</code> to grab the first person’s Face Encoding’s.</p><pre id="a3d75ca6-9726-4a5d-a79c-6f8e7be267df" class="code"><code>kohli = face_recognition.load_image_file(&quot;Virat Kohli.jpg&quot;)
+kohli_face_encoding = face_recognition.face_encodings(kohli)[0]</code></pre><pre id="3c0c938c-b72b-462b-b704-6f04660c2072" class="code"><code>ronaldo = face_recognition.load_image_file(&quot;Ronaldo.jpg&quot;)
+ronaldo_face_encoding= face_recognition.face_encodings(ronaldo)[0]</code></pre><p id="4d4ff6d1-276a-41ee-9f0b-7557e769dae6" class="">Now, Create arrays of known face encodings and their names</p><pre id="93825d02-6d73-49d5-935b-2ef1645a28c1" class="code"><code>known_face_encodings = [kohli_face_encoding, ronaldo_face_encoding]</code></pre><pre id="fa372802-746b-4bb7-b095-9139a6c91f6d" class="code"><code>known_face_names = [&quot;Virat Kohli&quot; , &quot;Ronaldo&quot;]</code></pre><blockquote id="5a3ef78f-d313-43b7-9d41-69c6dc8148c4" class="">Now, To recognize a face from the Unknown Image. We should load an unknown image and Find face locations and face encodings of the unknown image.</blockquote><pre id="0a9d9163-dece-4ffe-a005-8d1ad0c0328f" class="code"><code>unknown_image = face_recognition.load_image_file(&quot;Unknown.jpg&quot;)</code></pre><pre id="7be37b8c-0a29-4362-adf5-25c7c8492856" class="code"><code>face_locations = face_recognition.face_locations(unknown_image)
+face_encodings = face_recognition.face_encodings(unknown_image, face_locations)</code></pre><p id="69404ccd-43e2-479b-8d7d-eb4817fe1f8c" class="">Converting the image into a PIL-format image. So that we can draw bounding boxes on the image.</p><pre id="76ead537-221e-4343-9b1d-5e421adfce03" class="code"><code>from PIL import Image, ImageDraw
+pil_image = Image.fromarray(unknown_image)</code></pre><pre id="e0f17c3e-c039-43df-ac73-711dde11739f" class="code"><code># Create a Pillow ImageDraw Draw instance to draw
+draw = ImageDraw.Draw(pil_image)</code></pre><p id="39a622c5-9d03-47ca-a9d1-614e01f5b1ee" class="">Now, Loop through each face in the Image and draw bounding Boxes:</p><pre id="82c78e02-82f6-4e5e-9282-cd31e8834303" class="code"><code>for (t, r, b, l), in zip(face_locations, face_encodings):
+  matches = face_recognition.compare_faces(known_face_encodings, face_encoding)</code></pre><pre id="3a2b13d6-7eec-4ee3-9166-9058c58602b3" class="code"><code># Instead, use face_distance to calculate similarities
+    face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)</code></pre><pre id="f5cbdb72-31ca-45a5-bdd9-3ae24680aa35" class="code"><code>  best_match_index = np.argmin(face_distances)
+  name = &quot;Unknown&quot;
+  if matches[best_match_index]:
+    name = known_face_names[best_match_index]</code></pre><pre id="0c593a8d-e638-491c-86e0-c62aa13f679b" class="code"><code># Draw a box around the face using the Pillow module
+  draw.rectangle(((l, t), (r, b)), outline=(0, 0, 255))</code></pre><pre id="a2906942-707f-4e2b-b840-09d1c0c66cc1" class="code"><code># Draw a label with a name below the face 
+  width, height = draw.textsize(name)
+  draw.rectangle(((l, b - height - 10), (r, b)), fill=(0, 0, 255),     outline=(0, 0, 255))
+  draw.text((l + 6, b - height - 5), name, fill=(255, 255, 255, 255))</code></pre><pre id="3acc41a7-8b22-4566-bf20-25ac3ef57c6f" class="code"><code>display(pil_image)</code></pre><figure id="f16f4d9b-99ec-4f2d-b194-7ce80ab16cfa" class="image"><a href="https://cdn-images-1.medium.com/max/1000/1*oda5biCqXqLC0vKDVabyZA.png"><img src="https://cdn-images-1.medium.com/max/1000/1*oda5biCqXqLC0vKDVabyZA.png"/></a></figure><figure id="85b5f910-9444-4bd1-aece-e16f3ef8334a" class="image"><a href="https://cdn-images-1.medium.com/max/400/1*5nOJfmcZB6DO3cZHYf_ERg.png"><img style="width:240px" src="https://cdn-images-1.medium.com/max/400/1*5nOJfmcZB6DO3cZHYf_ERg.png"/></a><figcaption>Identified and Unidentified Faces</figcaption></figure><p id="99a04c38-449c-4e2a-8bba-f1fadc825e1c" class="">That’s it!!!</p><p id="b6eaf977-3964-4480-a9f8-673e563ad922" class="">I hope this gives you a more visual, hands on, insight into how to use <code>face_recognition</code> API.</p><h3 id="40f66525-519c-4b09-b1f2-bb33fed1c65c" class="">Reference:</h3><ul id="dd2fd542-c276-4720-adce-7fe241146eb6" class="bulleted-list"><li><a href="https://github.com/ageitgey/face_recognition">https://github.com/ageitgey/face_recognition</a><code>Face Recognition</code> <code>Face Detection</code> <code>Deep Learning</code> <code>Machine Learning</code> <code>Convolutional Neural Networks</code> <code>Data Science</code></li></ul></div></article></body></html>

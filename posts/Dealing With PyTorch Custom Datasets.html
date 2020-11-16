@@ -1,0 +1,833 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Dealing With PyTorch Custom Datasets.</title><style>
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", "SimSun", "Nanum Myeongjo", NanumMyeongjo, Batang, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC', 'Noto Sans CJK KR'; }
+
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC', 'Noto Sans Mono CJK KR'; }
+
+.highlight-default {
+}
+.highlight-gray {
+	color: rgb(155,154,151);
+}
+.highlight-brown {
+	color: rgb(100,71,58);
+}
+.highlight-orange {
+	color: rgb(217,115,13);
+}
+.highlight-yellow {
+	color: rgb(223,171,1);
+}
+.highlight-teal {
+	color: rgb(15,123,108);
+}
+.highlight-blue {
+	color: rgb(11,110,153);
+}
+.highlight-purple {
+	color: rgb(105,64,165);
+}
+.highlight-pink {
+	color: rgb(173,26,114);
+}
+.highlight-red {
+	color: rgb(224,62,62);
+}
+.highlight-gray_background {
+	background: rgb(235,236,237);
+}
+.highlight-brown_background {
+	background: rgb(233,229,227);
+}
+.highlight-orange_background {
+	background: rgb(250,235,221);
+}
+.highlight-yellow_background {
+	background: rgb(251,243,219);
+}
+.highlight-teal_background {
+	background: rgb(221,237,234);
+}
+.highlight-blue_background {
+	background: rgb(221,235,241);
+}
+.highlight-purple_background {
+	background: rgb(234,228,242);
+}
+.highlight-pink_background {
+	background: rgb(244,223,235);
+}
+.highlight-red_background {
+	background: rgb(251,228,228);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(55, 53, 47, 0.6);
+	fill: rgba(55, 53, 47, 0.6);
+}
+.block-color-brown {
+	color: rgb(100,71,58);
+	fill: rgb(100,71,58);
+}
+.block-color-orange {
+	color: rgb(217,115,13);
+	fill: rgb(217,115,13);
+}
+.block-color-yellow {
+	color: rgb(223,171,1);
+	fill: rgb(223,171,1);
+}
+.block-color-teal {
+	color: rgb(15,123,108);
+	fill: rgb(15,123,108);
+}
+.block-color-blue {
+	color: rgb(11,110,153);
+	fill: rgb(11,110,153);
+}
+.block-color-purple {
+	color: rgb(105,64,165);
+	fill: rgb(105,64,165);
+}
+.block-color-pink {
+	color: rgb(173,26,114);
+	fill: rgb(173,26,114);
+}
+.block-color-red {
+	color: rgb(224,62,62);
+	fill: rgb(224,62,62);
+}
+.block-color-gray_background {
+	background: rgb(235,236,237);
+}
+.block-color-brown_background {
+	background: rgb(233,229,227);
+}
+.block-color-orange_background {
+	background: rgb(250,235,221);
+}
+.block-color-yellow_background {
+	background: rgb(251,243,219);
+}
+.block-color-teal_background {
+	background: rgb(221,237,234);
+}
+.block-color-blue_background {
+	background: rgb(221,235,241);
+}
+.block-color-purple_background {
+	background: rgb(234,228,242);
+}
+.block-color-pink_background {
+	background: rgb(244,223,235);
+}
+.block-color-red_background {
+	background: rgb(251,228,228);
+}
+.select-value-color-default { background-color: rgba(206,205,202,0.5); }
+.select-value-color-gray { background-color: rgba(155,154,151, 0.4); }
+.select-value-color-brown { background-color: rgba(140,46,0,0.2); }
+.select-value-color-orange { background-color: rgba(245,93,0,0.2); }
+.select-value-color-yellow { background-color: rgba(233,168,0,0.2); }
+.select-value-color-green { background-color: rgba(0,135,107,0.2); }
+.select-value-color-blue { background-color: rgba(0,120,223,0.2); }
+.select-value-color-purple { background-color: rgba(103,36,222,0.2); }
+.select-value-color-pink { background-color: rgba(221,0,129,0.2); }
+.select-value-color-red { background-color: rgba(255,0,26,0.2); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="daa67806-2114-4bce-a425-c723678338c9" class="page sans"><header><h1 class="page-title">Dealing With PyTorch Custom Datasets.</h1></header><div class="page-body"><p id="374f89ef-b58f-4665-a5bc-d2f72a381349" class="">In this article, we are going to take a look at How to deal with Custom PyTorch Dataset.</p><figure id="5b3dbb9c-a545-47f3-a1f7-53cd2a2b9772" class="image"><a href="https://cdn-images-1.medium.com/max/1200/0*4gaHYsuvpPIYtR_I"><img src="https://cdn-images-1.medium.com/max/1200/0*4gaHYsuvpPIYtR_I"/></a></figure><p id="cad77c71-256b-4377-bcdb-4b33f8db84f6" class="">Photo by <a href="https://unsplash.com/@joshuaearle?utm_source=medium&amp;utm_medium=referral">Joshua Earle</a> on <a href="https://unsplash.com/?utm_source=medium&amp;utm_medium=referral">Unsplash</a></p><p id="43fbdc50-c2f9-49a3-bb74-654486a07516" class="">
+</p><p id="5e690290-025a-4c2e-bf6d-839c3a2525ae" class=""><strong>Custom datasets!! WHY??</strong></p><p id="93e1a3b4-c9df-4ae5-9f18-3c0159cbb643" class="">Because you can shape it in a way you desire!!!</p><p id="e79fe1bc-2c32-4e3f-84af-684370dd07b3" class="">It is natural that we will develop our way of creating custom datasets while dealing with different Projects.</p><p id="b050eb69-9145-4170-8b6d-3870a9a50d26" class="">There are some official custom dataset examples on PyTorch Like <a href="https://pytorch.org/tutorials/beginner/data_loading_tutorial.html">here</a> but it seemed a bit obscure to a beginner (like me, back then). The topics which we will discuss are as follows.</p><ol id="54bc74cb-845b-4e67-9f10-11121fb53c76" class="numbered-list" start="1"><li><strong>Custom Dataset Fundamentals.</strong></li></ol><ol id="dc56071a-af0e-4f92-bdbb-a60cadeab634" class="numbered-list" start="2"><li><strong>Using Torchvision Transforms.</strong></li></ol><ol id="9b0aff64-10f4-448f-b14d-bb55dbf06223" class="numbered-list" start="3"><li><strong>Dealing with pandas (read_csv)</strong></li></ol><ol id="6085d126-85bf-4a84-95c2-0a46decdd0c6" class="numbered-list" start="4"><li><strong>Embedding Classes into File Names</strong></li></ol><ol id="2937713c-a9f5-4747-9652-24673f2df299" class="numbered-list" start="5"><li><strong>Using DataLoader</strong></li></ol><h3 id="839f46f0-a41e-411c-9a99-918520553134" class="">1. Custom Dataset Fundamentals.</h3><p id="ccaf7de8-982c-403e-9b28-d998378b375a" class="">A dataset must contain the following functions to be used by DataLoader later on.</p><ul id="84658220-6dea-4911-940b-bb9e4d4f3651" class="bulleted-list"><li><code>__init__()</code> function, the initial logic happens here, like reading a CSV, assigning transforms, filtering data, etc.,</li></ul><ul id="f240bb8b-5d2d-42e0-9b38-0c83931bdead" class="bulleted-list"><li><code>__getitem__()</code> returns the data and the labels.</li></ul><ul id="380aa2b8-6129-4f02-b9c8-bf48d0f5f991" class="bulleted-list"><li><code>__len__()</code> returns the count of samples your dataset has.</li></ul><p id="94b465d3-82d3-4597-bda3-884ebb6e5223" class="">Now, the first part is to create a dataset class:</p><pre id="1d5dc3ef-10ed-4c4c-9303-65495b756642" class="code"><code>from torch.utils.data.dataset import Dataset
+
+class MyCustomDataset(Dataset):
+    def __init__(self, ...):
+        # stuff
+        
+    def __getitem__(self, index):
+        # stuff
+        return (img, label)
+
+    def __len__(self):
+        return count # of how many examples(images?) you have</code></pre><p id="f5b74a32-58a5-4933-a03a-d3c9a5c0a781" class="">Here, <code>MyCustomDataset</code> returns two things, an image, and its label. But this doesn’t mean that <code>__getitem__()</code> is only restricted to return those.</p><p id="a72d58d5-a58f-46cf-ae55-b0ccbd73cc97" class=""><strong>NOTE:</strong></p><ul id="0dc8bde1-73f4-4d9e-83ca-91df824348c0" class="bulleted-list"><li><code>__getitem()</code> returns a specific type for a single data point (like a tensor), Otherwise, while loading the data you’ll get an error like,</li></ul><pre id="7d66234c-cbd5-477d-9d1c-5466a63f4405" class="code"><code>TypeError: batch must contain tensors, numbers, dicts or lists; found &lt;class &#x27;PIL.PngImagePlugin.PngImageFile&#x27;&gt;</code></pre><h3 id="d5b3e2ed-171c-419f-8b56-3b16051e2506" class=""><strong>2. Using Torchvision Transforms:</strong></h3><p id="b45b15ad-52fd-4960-b71b-728c290acce3" class="">In most of the examples, we will see <code>transforms = None</code> in the <code>__init__()</code> , it is to apply Torchvision transforms for our data/image. You can find the list of all transforms <a href="https://pytorch.org/docs/0.2.0/torchvision/transforms.html">here</a>.</p><p id="a7fee20d-bffe-44ee-a817-5f107e2a123b" class="">Most Common usage of transforms are:</p><pre id="1822cc51-af29-49fd-bbf5-05a9f8f600df" class="code"><code>from torch.utils.data.dataset import Dataset
+from torchvision import transforms
+
+class MyCustomDataset(Dataset):
+    def __init__(self, ..., transforms=None):
+        # stuff
+        ...
+        self.transforms = transforms
+        
+    def __getitem__(self, index):
+        # stuff
+        ...
+        data = # Some data read from a file or image
+        if self.transforms is not None:
+            data = self.transforms(data)
+        # If the transform variable is not empty
+        # then it applies the operations in the transforms with the order that it is created.
+        return (img, label)
+
+    def __len__(self):
+        return count # of how many data(images?) you have
+        
+if __name__ == &#x27;__main__&#x27;:
+    # Define transforms (1)
+    transformations = transforms.Compose([transforms.CenterCrop(100), transforms.ToTensor()])
+    # Call the dataset
+    custom_dataset = MyCustomDataset(..., transformations)</code></pre><p id="2ea4cb07-6fcf-4011-8128-f92114ae1a09" class="">You can define the transforms inside the Dataset class. Like this:</p><pre id="3bd5391a-b61a-4a38-b892-4c8c7a31e511" class="code"><code>from torch.utils.data.dataset import Dataset
+from torchvision import transforms
+
+class MyCustomDataset(Dataset):
+    def __init__(self, ...):
+        # stuff
+        ...
+        # (2) One way to do it is define transforms individually
+        self.center_crop = transforms.CenterCrop(100)
+        self.to_tensor = transforms.ToTensor()
+        
+        # (3) Or you can still compose them like 
+        self.transformations = \
+            transforms.Compose([transforms.CenterCrop(100),
+                                transforms.ToTensor()])
+        
+    def __getitem__(self, index):
+        # stuff
+        ...
+        data = # Some data read from a file or image
+        
+# When you call transform for the second time it calls __call__()               and applies the transform </code></pre><pre id="8a938bda-08c0-473e-938e-29436d687221" class="code"><code>        data = self.center_crop(data)  # (2)
+        data = self.to_tensor(data)  # (2)
+        
+        # Or you can call the composed version
+        data = self.transformations(data)  # (3)
+        
+     # Note that you only need one of the implementations,(2) or (3)
+        return (img, label)
+
+    def __len__(self):
+        return count # of how many data(images?) you have
+        
+if __name__ == &#x27;__main__&#x27;:
+    # Call the dataset
+    custom_dataset = MyCustomDataset(...)</code></pre><h3 id="792be820-b91d-40db-b370-036e271cade9" class=""><strong>3. Dealing with Pandas(read_csv):</strong></h3><p id="e43050a0-68d9-40f0-9875-fb1be38f40a2" class="">Now our Dataset contains a file name, label, and an extra operation indicator, we’ll perform some extra operation on the image.</p><pre id="f59193b1-c2b3-4cf0-b2a7-3b38dc9586b8" class="code"><code>+-----------+-------+-----------------+
+| File Name | Label | Extra Operation |
++-----------+-------+-----------------+
+| tr_0.png  |     5 | TRUE            |
+| tr_1.png  |     0 | FALSE           |
+| tr_1.png  |     4 | FALSE           |
++-----------+-------+-----------------+</code></pre><p id="2335504b-1fc2-40e6-8dbd-a3e3511c9e78" class="">Building a Custom dataset that reads image locations from this CSV.</p><pre id="5969aaa8-d87b-4a6c-aaaf-da01d2e2897e" class="code"><code>class CustomDatasetFromImages(Dataset):
+    def __init__(self, csv_path):
+        &quot;&quot;&quot;
+        Args:
+            csv_path (string): path to csv file
+            img_path (string): path to the folder where images are
+            transform: pytorch transforms for transforms and tensor conversion
+        &quot;&quot;&quot;</code></pre><pre id="0e77ce2f-e076-4d08-932d-d4a91370c23c" class="code"><code># Transforms
+        self.to_tensor = transforms.ToTensor()
+        # Read the csv file
+        self.data_info = pd.read_csv(csv_path, header=None)
+        # First column contains the image paths
+        self.image_arr = np.asarray(self.data_info.iloc[:, 0])
+        # Second column is the labels
+        self.label_arr = np.asarray(self.data_info.iloc[:, 1])
+        # Third column is for an operation indicator
+        self.operation_arr = np.asarray(self.data_info.iloc[:, 2])
+        # Calculate len
+        self.data_len = len(self.data_info.index)
+
+    def __getitem__(self, index):
+        # Get image name from the pandas df
+        single_image_name = self.image_arr[index]
+        # Open image
+        img_as_img = Image.open(single_image_name)
+
+        # Check if there is an operation
+        some_operation = self.operation_arr[index]</code></pre><pre id="32158b3a-be9e-4a44-a410-2c96f4d77159" class="code"><code>        # If there is an operation
+        if some_operation:
+            # Do some operation on image
+            # ...
+            # ...
+            pass</code></pre><pre id="ffcb6a75-a628-45cc-a317-3a35a08bce10" class="code"><code>        # Transform image to tensor
+        img_as_tensor = self.to_tensor(img_as_img)
+
+        # Get label of the image based on the cropped pandas column</code></pre><pre id="c519cedf-ac61-4360-9ac0-0e9fcdfdd582" class="code"><code>        single_image_label = self.label_arr[index]
+
+        return (img_as_tensor, single_image_label)
+
+    def __len__(self):
+        return self.data_len
+
+if __name__ == &quot;__main__&quot;:
+    # Call dataset
+    custom_mnist_from_images =  \
+        CustomDatasetFromImages(&#x27;../data/mnist_labels.csv&#x27;)</code></pre><p id="9c915a6a-76df-477b-9c57-c5945249e0e4" class="">Another example of reading an image from CSV where the value of each pixel is listed in the Columns(Eg., <strong>MNIST</strong>). A little change of logic in <code>__getitem__()</code> . In the end, we’ll just return images as Tensors and their labels. The data looks like this,</p><pre id="447f7d2b-309e-4295-b290-43321c3a48e4" class="code"><code>+-------+---------+---------+-----+
+| Label | pixel_1 | pixel_2 | ... |
++-------+---------+---------+-----+
+|     1 |      50 |      99 | ... |
+|     0 |      21 |     223 | ... |
+|     9 |      44 |     112 |     |
++-------+---------+---------+-----+</code></pre><p id="0e3a1ff3-c2fd-4dba-b587-4ecbbf26e4f3" class="">Now, the code looks like:</p><pre id="d452826d-5f6c-459e-9063-4a48a0b87ea6" class="code"><code>class CustomDatasetFromCSV(Dataset):
+    def __init__(self, csv_path, height, width, transforms=None):
+        &quot;&quot;&quot;
+        Args:
+            csv_path (string): path to csv file
+            height (int): image height
+            width (int): image width
+            transform: pytorch transforms for transforms and tensor conversion
+        &quot;&quot;&quot;</code></pre><pre id="de50fad5-bb59-498f-adf1-ff9796b44aa9" class="code"><code>        self.data = pd.read_csv(csv_path)
+        self.labels = np.asarray(self.data.iloc[:, 0])
+        self.height = height
+        self.width = width
+        self.transforms = transform
+
+    def __getitem__(self, index):
+        single_image_label = self.labels[index]</code></pre><pre id="52b4e7d2-1ae3-4f07-bf35-7ea711d3fbf5" class="code"><code>        # Read each 784 pixels and reshape the 1D array ([784]) to 2D array ([28,28]) 
+        img_as_np = np.asarray(self.data.iloc[index][1:]).reshape(28,28).astype(&#x27;uint8&#x27;)</code></pre><pre id="dd491b78-957b-4130-a0f9-97bd9396f506" class="code"><code>	# Convert image from numpy array to PIL image, mode &#x27;L&#x27; is for grayscale
+        img_as_img = Image.fromarray(img_as_np)
+        img_as_img = img_as_img.convert(&#x27;L&#x27;)</code></pre><pre id="7ae498a4-19aa-412f-8a93-a0d4c433d69b" class="code"><code>        # Transform image to tensor
+        if self.transforms is not None:
+            img_as_tensor = self.transforms(img_as_img)</code></pre><pre id="6045191a-65ea-45b8-8714-30f95150245a" class="code"><code>        # Return image and the label
+        return (img_as_tensor, single_image_label)
+
+    def __len__(self):
+        return len(self.data.index)
+        
+
+if __name__ == &quot;__main__&quot;:
+    transformations = transforms.Compose([transforms.ToTensor()])
+    custom_mnist_from_csv = \
+        CustomDatasetFromCSV(&#x27;../data/mnist_in_csv.csv&#x27;, 28, 28, transformations)</code></pre><h3 id="fa60ad29-6a0c-4c34-9f88-ca688ebbabf6" class=""><strong>4. Embedding Class names as File Names:</strong></h3><p id="54aba392-b699-4414-8534-e07d22f61b7d" class="">Using Folder names of the images as the File_Names:</p><pre id="86c7d83a-f31c-4cd3-ba2e-dfb8df65dded" class="code"><code>class CustomDatasetFromFile(Dataset):
+    def __init__(self, folder_path):
+        &quot;&quot;&quot;
+        A dataset example where the class is embedded in the file names
+        This data example also does not use any torch transforms
+
+        Args:
+            folder_path (string): path to image folder
+        &quot;&quot;&quot;</code></pre><pre id="ffbd151d-1688-4b95-9168-e4e8e8c4d0d8" class="code"><code>        # Get image list
+        self.image_list = glob.glob(folder_path+&#x27;*&#x27;)</code></pre><pre id="d9e2ea4c-eff7-4fa1-ab7f-a46cbc9b0bbc" class="code"><code>        # Calculate len
+        self.data_len = len(self.image_list)
+
+    def __getitem__(self, index):
+        # Get image name from the pandas df
+        single_image_path = self.image_list[index]</code></pre><pre id="4e7f5bed-40be-42d7-bb96-f845ac893cd3" class="code"><code>        # Open image
+        im_as_im = Image.open(single_image_path)
+
+        # Do some operations on image
+        # Convert to numpy, dim = 28x28
+        im_as_np = np.asarray(im_as_im)/255</code></pre><pre id="d354e8be-4006-482d-9fe5-719e34be4e8b" class="code"><code>        # Add channel dimension, dim = 1x28x28
+        # Note: You do not need to do this if you are reading RGB images
+        # or i there is already channel dimension</code></pre><pre id="e63bf30d-29cd-4c78-8968-70c496cb9591" class="code"><code>        im_as_np = np.expand_dims(im_as_np, 0)</code></pre><pre id="5a6b6d6c-dd01-4b3a-b2cc-4b87700ca0dc" class="code"><code>        # Some preprocessing operations on numpy array
+        # ...
+        # ...
+        # ...
+
+        # Transform image to tensor, change data type
+        im_as_ten = torch.from_numpy(im_as_np).float()
+
+        # Get label(class) of the image based on the file name
+        class_indicator_location = single_image_path.rfind(&#x27;_c&#x27;)</code></pre><pre id="eb76059b-dc62-47ae-8558-2251261641ec" class="code"><code>        label = int(single_image_path[class_indicator_location+2:class_indicator_location+3])</code></pre><pre id="30d7143a-88ac-4770-a495-1e4512da9a67" class="code"><code>        return (im_as_ten, label)
+
+    def __len__(self):
+        return self.data_len</code></pre><h3 id="aa781a6f-3529-43e4-9c00-166f850f8931" class=""><strong>5. Using DataLoader:</strong></h3><p id="0912b64d-5ab4-4fe1-818c-9e8d51024fb0" class="">PyTorch DataLoaders will call <code>__getitem__()</code> and wrap them up into a batch. But Technically, we will not use DataLoaders and call <code>__getitem__()</code> one at a time and feed data into the models. Now, we can call the DataLoader like:</p><pre id="48945dd8-d8c2-440f-8960-68e3c69c51ad" class="code"><code>...
+if __name__ == &quot;__main__&quot;:
+    # Define transforms
+    transformations = transforms.Compose([transforms.ToTensor()])</code></pre><pre id="f42c3ae2-5f1c-4745-b3ea-81eca955a09f" class="code"><code>    # Define custom dataset
+    custom_mnist_from_csv = \
+        CustomDatasetFromCSV(&#x27;../data/mnist_in_csv.csv&#x27;,
+                             28, 28,
+                             transformations)</code></pre><pre id="b3691885-8159-4ff6-9b84-bb8b488f576f" class="code"><code>    # Define data loader
+    mn_dataset_loader = torch.utils.data.DataLoader(dataset=custom_mnist_from_csv,
+                                                    batch_size=10,
+                                                    shuffle=False)
+    
+    for images, labels in mn_dataset_loader:
+        # Feed the data to the model</code></pre><p id="d3a46fb4-fc99-4b82-90ea-94d8008c747d" class="">Here, batch_size decides how many individual data points will be wrapped in a single batch. The DataLoader will return a Tensor of shape (Batch — Depth — Height — Width)</p><pre id="c5101247-59ff-4cf0-bd84-e27f90fc6f8a" class="code"><code>tensor.shape(10x1x28x28) # if batch_size =10 (For MNIST Data). </code></pre><p id="6ae59e27-de7c-484e-81db-677ba9a175ea" class="">That’s it!!!</p><p id="6247eb85-3bc6-4f27-8cfa-c38663f54a9a" class="">Custom Datasets!! No Worries!!</p><p id="92f48b8b-bd79-47ca-9d80-a8dad21e9da4" class=""><strong>Reference:</strong></p><ul id="043b9985-f64b-4565-ac4b-5e79529cfeeb" class="bulleted-list"><li><a href="https://github.com/utkuozbulak/pytorch-custom-dataset-examples#a-custom-custom-custom-dataset">https://github.com/utkuozbulak/pytorch-custom-dataset-examples#a-custom-custom-custom-dataset</a></li></ul></div></article></body></html>
